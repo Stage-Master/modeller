@@ -1,0 +1,111 @@
+{% extends "blog/home.html" %}
+{% block style %}
+.btn-toastr-callback{
+  margin-right: 0.5%;
+ padding-top: 10px;
+  padding-bottom: 10px;
+  font-weight: 600;
+}
+
+.link{
+  color:black;
+  font-weight: 600;
+}
+
+{% endblock %}
+{% block startBody %}
+<body  onload="init()" >
+{% endblock %}
+{% block search %}
+{% endblock %}
+{% block sqlWindow %}
+<div id="SQLOverlay" >
+			   <div class="row " style="padding-top:10%">
+                 <div class="col-md-5 col-md-offset-2">
+							<div class="panel" style=" max-height:400px;overflow:auto;"></div>
+			      </div>
+               </div>
+</div>
+{% endblock %}
+{% block main %}
+  <div class="main" style="width:100%; margin-bottom:10%">
+  <!-- MAIN CONTENT -->
+     <div class="main-content">
+        <div class="container-fluid">
+      <!-- OVERVIEW -->
+
+         <p class="demo-button"  >
+            <button  type="button" class="btn btn-default btn-toastr-callback btnNew"  ><a class="link" href="{% url "home" %}" title="Back to the home page."> <i class="fa fa-home"></i> &nbsp;&nbsp;HOME </a>
+            	<button type = "button " class="dropdown btn btn-default btn-toastr-callback btnNew "><i class="fa fa-file" ></i>
+  					<a href="#" class="dropdown-toggle link" data-toggle="dropdown" > &nbsp; File </a>
+                       <input id="inputJSONLoad" accept=".json" type="file" style="display: none" />
+  							<ul class="dropdown-menu">
+  								<li><a href="{% url "modeller" version.id version.title %}" title="Discard the current model and start a new one.">New Version</a></li>
+  								<li><a href="#" onclick="loadJSON()" title="Discard the current model and load an existing one.">Load Version</a></li>
+  							</ul>
+  						</button>
+            </button>
+  					<button type = "button " class="dropdown btn btn-default btn-toastr-callback btnNew" >
+  					<a href="#" class="dropdown-toggle link" data-toggle="dropdown"> GENERATE </a>
+  							<ul class="dropdown-menu">
+                                <li title="Select the target DBMS for the generated SQL Code.">
+                                    <form class="form-auth-small"  >
+									<div class="form-group" >
+										<select class="form-control" id="dbms">
+										<option value="PostgreSQL">PostgreSQL</option>
+										<option value="MySQL">MySQL</option>
+									    </select>
+								    </div>
+                                        <div class="form-group" >
+										<input type="checkbox" style="margin-left:20%" title="Select if the generated code should contain view or not." value="Use views" id="view" checked>
+								        <span>Use views</span>
+								       </div>
+                                        </form>
+
+                                </li>
+
+  								<li><a href="#" id="SQLCode" title="Generate SQL Code for implementation of a model in a relational database." >SQL Code</a></li>
+  								<li><a href="#"  id="JSONCode" title="Generate Json String to implement the model in a program.">JSON String</a></li>
+                                <li><a href="#" onclick="printDiagram()" title="Generate a vector image of the entire model.">SVG Screenshot</a></li>
+  							</ul>
+
+  						</button>
+             </button>
+
+            <button type="button" class="btn btn-default btn-toastr-callback btnNew"  data-context="info" data-message="Please click me"  onclick="save({{version.id}})" title="Save the current model with the changes." ><i class="fa fa-save" ></i>&nbsp;&nbsp;SAVE</button>
+             <button type="button" class="btn btn-default btn-toastr-callback btnNew"  data-context="info" data-message="Please click me" onclick="selectAll()" title="Select all items.">&nbsp;&nbsp;SELECT ALL</button>
+            <button type="button" class="btn btn-default btn-toastr-callback btnNew"  data-context="info" data-message="Please click close button" onclick="undo()"title="Undo the changes." ><i class="fa fa-undo"></i>&nbsp;&nbsp;UNDO</button>
+            <button type="button" class="btn btn-default btn-toastr-callback btnNew"  data-context="info" data-message="Please click close button" onclick="redo()"  ><i class="fa fa-repeat" title="Redo the changes."></i>&nbsp;&nbsp;REDO</button>
+            <button type="button" class="btn btn-default btn-toastr-callback btnNew"  data-context="info" data-message="Please click close button" onclick="remove()" title="Select the selected item."><i class="fa fa-trash"  ></i>&nbsp;&nbsp;DELETE</button>
+
+      </p>
+
+      <div class="row"  >
+      <div class="col-md-9"  >
+
+          <div class="panel panel-resizable"  id="scroll">
+
+          <div style="width: 100%; display: flex; justify-content: space-between">
+
+          <div class="panel" id="myPaletteDiv" style="width: 180px; margin-right: 2px; height: 750px"></div>
+           <div id="myDiagramDiv" style="flex-grow: 1; height: 750px; "></div>
+          </div>
+          </div>
+         </div>
+          <div class="col-md-3">
+              <div style="height: 450 px;  background-color:transparent">
+              <div id="myInspectorDiv"> </div>
+              </div>
+          </div>
+        </div>
+            <textarea id="mySavedModel" style="visibility: hidden">{{version.content}}</textarea>
+
+      <!-- END OVERVIEW -->
+
+       </div>
+       </div>
+  <!-- END MAIN CONTENT -->
+     </div>
+  </div>
+
+{% endblock %}

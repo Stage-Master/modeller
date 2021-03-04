@@ -1,0 +1,48 @@
+{% extends "blog/home.html" %}
+{% load static %}
+{% block style %}
+.panel-resizable{
+  resize: vertical;
+  overflow: auto;
+  height:650px;
+}
+.form-group{
+display:flex;
+}
+.form-control{
+margin-left:10%
+}
+
+{% endblock %}
+{% block startBody %}
+<body >
+{% endblock %}
+{% block search %}
+{% endblock %}
+{% block sqlWindow %}
+{% endblock %}
+{% block main %}
+ <!-- WRAPPER -->
+<div class="main">
+	<div class="main-content">
+        <div class="container-fluid">
+						<div class="panel" style="width:80%;">
+                        <div class="panel-heading"><h3>ABOUT</h3></div>
+							<div  class="panel-body">The Modeller tool is an agile data warehouse modeling tool based on Anchor Modeling. It is developed by Thinhinane Hamitouche and is the property of ERIC Laboratory. The tool is written in HTML5, CSS3 and JavaScript (client) and Python (server).
+								</div>
+                        <div class="panel-heading"><h3>VERSION</h3></div>
+							<div  class="panel-body">You are currently running version 1.0 (release: Tuesday the 1st, Sep, 2020).</div>
+
+							<div class="panel-heading"><h3>KEYBOARD SHORTCUTS</h3></div>
+							<div  class="panel-body">CTRL+A	– Select all <br> CTRL+C – Copy <br>  CTRL+X – Cut <br>   CTRL+V – Paste <br>  Delete– Delete selected item <br>  CTRL+(+) – Zoom in <br>  CTRL+(-) – Zoom out <br></div>
+						</div>
+
+					</div>
+
+
+	    </div>
+
+</div>
+{% endblock %}
+  	{% block footer %}
+{% endblock %}

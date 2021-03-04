@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en" >
+{% load static %}
+<head >
+	<title>Data Warehouse Agile Modeller Tool</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<!-- VENDOR CSS -->
+	<link rel="stylesheet" href="{% static 'blog/vendor/bootstrap/css/bootstrap.min.css' %}" >
+	<link rel="stylesheet" href="{% static 'blog/vendor/font-awesome/css/font-awesome.min.css' %}" >
+	<link rel="stylesheet" href="{% static 'blog/vendor/linearicons/style.css' %}" >
+	<link rel="stylesheet" href="{% static 'blog/vendor/chartist/css/chartist-custom.css' %}" >
+	<!-- MAIN CSS -->
+	<link rel="stylesheet" href="{% static 'blog/css/main.css' %}" >
+	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+	<link rel="stylesheet" href="{% static 'blog/css/demo.css' %}">
+    <!--<link rel="stylesheet" href="{% static 'blog/css/DataInspector.css' %}">-->
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+	<!-- ICONS -->
+	<link rel="apple-touch-icon" sizes="76x76" href="{% static 'blog/img/icon.png' %}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{% static 'blog/img/favicon.png' %}">
+	<script src="{% static 'blog/vendor/jquery/jquery.min.js' %}" ></script>
+	<script src="{% static 'blog/vendor/bootstrap/js/bootstrap.min.js' %}" ></script>
+	<script src="{% static 'blog/vendor/jquery-slimscroll/jquery.slimscroll.min.js' %}" ></script>
+	<script src="{% static 'blog/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js' %}" ></script>
+	<script src="{% static 'blog/vendor/chartist/js/chartist.min.js' %}" ></script>
+	<script src="{% static 'blog/scripts/klorofil-common.js' %}" ></script>
+	<script src="{% static 'blog/scripts/diagram.js' %}" ></script>
+	<script src="{% static 'blog/scripts/go.js' %}" ></script>
+	<script src="{% static 'blog/scripts/DataInspector.js' %}" ></script>
+	<script src="{% static 'blog/scripts/FileSaver.js' %}" ></script>
+</head>
+<style type="text/css">
+footer {
+  color:white ;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  background-color: #999999;
+}
+.btnNew{
+background-color:transparent;
+margin-right:1.5%
+}
+#btn2, #btn3{
+display:none;
+}
+.btn-toastr-callback{
+	margin-right: 1%;
+ padding-top: 10px;
+  padding-bottom: 10px;
+	font-weight: 600;
+
+}
+#SQLOverlay, #CreateOverlay, #RenameOverlay, #CreateSuperOverlay, #RenameSuperOverlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+
+}
+.panel-resizable{
+  resize: vertical;
+  overflow: auto;
+  height:500px;
+}
+.active{
+background-color:#E8E8E8;
+}
+.select,.selected{
+display:none;
+}
+{% block style %}
+{% endblock %}
+</style>
+{% block startBody %}
+<body onload="loadModelVersions({{modelID}})">
+{% endblock %}
+	<!-- WRAPPER -->
+	<div id="wrapper" >
+		<!-- NAVBAR -->
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="brand">
+				<a href="{% url "home" %}" ><img src="{% static 'blog/img/modeler_logo.jpg' %}" alt="Modeller Logo" class="img-responsive logo"></a>
+			</div>
+
+			<div class="container-fluid">
+             {% block search %}
+				<form class="navbar-form navbar-left">
+					<div class="input-group">
+ 						<input type="text" id="inputFilter" class="form-control" title="Search a version of the selected model containing the given string." placeholder="Search version...">
+ 						<span class="input-group-btn"><button type="button" class="btn btn-primary">Go</button></span>
+ 					</div>
+				</form>
+              {% endblock %}
+				<div id="navbar-menu">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="lnr lnr-question-circle"></i> <span>Help</span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
+							<ul class="dropdown-menu">
+								<li><a target="_blank" href="{% url "about" %}" title="Show a page with video tutorials explaining how to use the modeling tool." >About</a></li>
+								<li><a target="_blank" href="{% url "tutorials" %}" title="Show a page with general information about the tool.">Tutorials</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+			{% block sqlWindow %}
+			<div id="CreateOverlay" >
+			   <div class="row " style="padding-top:10%">
+                 <div class="col-md-4 col-md-offset-2">
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">Create New Version</h3>
+								</div>
+								<div class="panel-body">
+									<form method="get" action="/createModel/{{modelID}}">
+									<input type="text" class="form-control" placeholder="Name" required name="inputCreateModel" ></br>
+                                    <button type="submit" class="btn btn-primary" style="margin-left:40%;" >CREATE</button>
+									<button type="button" class="btn btn-default" style="margin-left:5%;color:#00aaff" onclick="offCreate()">CANCEL</button>
+                                    </form>
+
+								</div>
+								<div>
+
+			                     </div>
+                             </div>
+                  </div>
+			   </div>
+			</div>
+			{% endblock %}
+			<div id="RenameOverlay" >
+			   <div class="row " style="padding-top:10%">
+                 <div class="col-md-4 col-md-offset-2">
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">Rename Version</h3>
+								</div>
+								<div class="panel-body">
+									<form method="get" action="/renameModel/{{modelID}}">
+									<input type="hidden" class="form-control"  required name="inputRenameModelID" id="inputRenameModelID" ></br>
+										<input type="text" class="form-control"  required name="inputRenameModelTitle" id="inputRenameModelTitle" ></br>
+                                    <button type="submit" class="btn btn-primary" style="margin-left:40%;" >RENAME</button>
+									<button type="button" class="btn btn-default" style="margin-left:5%;color:#00aaff" onclick="offRename()">CANCEL</button>
+                                    </form>
+
+								</div>
+								<div>
+
+			                     </div>
+                             </div>
+                  </div>
+			   </div>
+			</div>
+			<div id="RenameSuperOverlay" >
+			   <div class="row " style="padding-top:10%">
+                 <div class="col-md-4 col-md-offset-2">
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">Rename Version</h3>
+								</div>
+								<div class="panel-body">
+									<form method="get" action="/renameSuperModel">
+									<input type="hidden" class="form-control"  required name="inputRenameSuperModelID" id="inputRenameSuperModelID" ></br>
+										<input type="text" class="form-control"  required name="inputRenameSuperModelTitle" id="inputRenameSuperModelTitle" ></br>
+                                        <button type="submit" class="btn btn-primary" style="margin-left:40%;" >RENAME</button>
+									    <button type="button" class="btn btn-default" style="margin-left:5%;color:#00aaff" onclick="offRenameSuper()">CANCEL</button>
+                                    </form>
+
+								</div>
+								<div>
+
+			                     </div>
+                             </div>
+                  </div>
+			   </div>
+			</div>
+			<div id="CreateSuperOverlay" >
+			   <div class="row " style="padding-top:10%">
+                 <div class="col-md-4 col-md-offset-2">
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">Create New Model</h3>
+								</div>
+								<div class="panel-body">
+									<form method="get" action="/createSuperModel/{{modelID}}">
+									<input type="text" class="form-control" placeholder="Name" required name="inputCreateSuperModel" ></br>
+                                    <button type="submit" class="btn btn-primary" style="margin-left:40%;" >CREATE</button>
+									<button type="button" class="btn btn-default" style="margin-left:5%;color:#00aaff" onclick="offCreateSuper()">CANCEL</button>
+                                    </form>
+
+								</div>
+								<div>
+
+			                     </div>
+                             </div>
+                  </div>
+			   </div>
+			</div>
+		</nav>
+		<!-- END NAVBAR -->
+		<!-- MAIN -->
+		{% block main %}
+		<div class="main" style="width:100%;margin-bottom:10%;">
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+
+
+
+				<div class="container-fluid">
+					<!-- OVERVIEW -->
+
+					<p class="demo-button"  >
+						        <input id="inputJSONImport" accept=".json" type="file" style="display: none" />
+						     <button type="button" class="btn btn-default btn-toastr-callback btnNew"  onclick="onCreateSuper()" title="Create a new model by giving its name.">NEW MODEL...</button>
+						       <button type="button" class="btn btn-default btn-toastr-callback btnNew " id="btn1" onclick="onCreate()" style="margin-left:13%" title="Create a new version of the selected model by giving its name.">NEW VERSION...</button>
+						          <button type="button" class="btn btn-default btn-toastr-callback btnNew " id="btn2"  style="margin-left:13%" onclick="back()" title="Back to all versions.">BACK...</button>
+						          <button type="button" class="btn btn-default btn-toastr-callback btnNew " id="btn3" onclick="compare()" title="Track the evolution.">SHOW...</button>
+								 <button type="button" class="btn btn-default btn-toastr-callback btnNew " id="btn4"   onclick="importJSON({{modelID}})"  title="Import a existing version from a JSON file.">IMPORT...</button>
+						          <button type="button" class="btn btn-default btn-toastr-callback btnNew " id="btn5"  onclick="showEvolution()" title="Compare between two versions in term of evolution.">SHOW EVOLUTION...</button>
+
+					</p>
+					<div>
+					<div style="display: flex;">
+					    <div class="panel panel-headline panel-resizable" style="max-height:500px;overflow:auto;width:25%;">
+
+							<div class="sidebar-scroll">
+
+					<table  class="table table-hover">
+                        {% for model in models %}
+						<tr id="model_{{model.id}}">
+							<td style="padding-top:10%"><a   href="{% url "loadModelVersions" model.id %}" ><img src="{% static 'blog/img/folder.png' %}"/>
+							<span style="color:#676A6D;padding-left:30%;">{{model.title}}</span></a></td>
+						    <td>
+								<ul class="nav navbar-nav navbar-right" >
+								<li class="dropdown" >
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img src="{% static 'blog/img/option.png' %}"/></a >
+							                        <ul class="dropdown-menu" >
+														<li ><a href="#" onclick="onRenameSuper({{model.id}},'{{model.title}}')" >Rename ...</a></li>
+														<li ><a href="{% url "deleteSuperModel" model.id %}">Delete </a></li>
+
+													</ul>
+								</li>
+					         </ul>
+                             </td>
+
+
+						</tr>
+                         {% endfor %}
+					</table>
+
+					       </div>
+
+					</div>
+						<div class="panel panel-headline panel-resizable" style="max-height:500px;overflow:auto;width:80%;margin-left:1%;">
+
+						<div class="col-md-11" >
+									<table  class="table table-hover">
+										<thead >
+											<tr >
+												<th ></th>
+												<th ></th>
+												<th style="padding-top:3%;"><label> Version Name</label></th>
+                                                <th><label>Last Update</label></th>
+                                                <th><label style="margin-left:70%;" >Options</label></th>
+
+											</tr>
+										</thead>
+
+										<tbody id="tableVersions" >
+                                          {% for version in versions %}
+											<tr >
+												<td style="padding-top:5%"><a class="select" id="select_{{version.id}}" href="#" onclick="select({{version.id}}, '{{version.date.isoformat}}')"><img  src="{% static 'blog/img/case.png' %}" href="#"/></a><a class="selected" id="selected_{{version.id}}" href="#" onclick="selected({{version.id}},'{{version.date}}')"><img src="{% static 'blog/img/selected.png' %}"/></a></td>
+												<td style="padding-top:5%"><a  href="{% url "modellerFromVersion" version.id %}" ><img src="{% static 'blog/img/file.png' %}"/></a></td>
+												<td style="padding-top:5%">{{version.title}}</td>
+                                                <td style="padding-top:5%">{{version.date}}</td>
+                                                <td >
+
+					                                 <ul class="nav navbar-nav navbar-right"  >
+						                              <li class="dropdown" >
+														  <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img style="margin-left:70%;" src="{% static 'blog/img/option.png' %}"/></a>
+							                        <ul class="dropdown-menu" style="width:20%;">
+														 <li><a href="{% url  "modellerFromVersion" version.id %}" >Open ...</a></li>
+														<li><a href="#" onclick="onRename({{version.id}},'{{version.title}}')" >Rename ...</a></li>
+														<li><a href="{% url "deleteModel" version.id modelID %}">Delete</a></li>
+								                       <li><a href="{% url "copyModel" version.title version.content modelID%}">Copy</a></li>
+								                       <li><a href="#" onclick="exportJSONForHome('{{version.title}}',{{version.content}})">Export JSON</a></li>
+														<li><a href="#" onclick="exportSQLForHome('{{version.title}}',{{version.content}})">Export SQL</a></li>
+							                       </ul>
+						                         </li>
+					                               </ul>
+
+												</td>
+
+											</tr>
+                                          {% endfor %}
+										</tbody>
+
+									</table>
+					  </div>
+
+					</div>
+					<!-- END OVERVIEW -->
+                    </div>
+
+				</div>
+			</div>
+			<!-- END MAIN CONTENT -->
+		</div>
+		{% endblock %}
+		<!-- END MAIN -->
+	<!-- footer-->
+	</div>
+   	{% block footer %}
+	<footer class="footer" >
+
+		<h3 class ="text-center" > Modeller Tool</h3>
+		<h4 class ="text-center" > Design an agile model and implement it ! </h4>
+ </footer>
+   {% endblock %}
+	<!-- END WRAPPER -->
+</body>
+
+</html>

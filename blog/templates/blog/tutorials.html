@@ -1,0 +1,72 @@
+{% extends "blog/home.html" %}
+{% load static %}
+{% block style %}
+.panel-resizable{
+  resize: vertical;
+  overflow: auto;
+  height:650px;
+}
+.form-group{
+display:flex;
+}
+.form-control{
+margin-left:10%
+}
+
+{% endblock %}
+{% block startBody %}
+<body >
+{% endblock %}
+{% block search %}
+{% endblock %}
+{% block sqlWindow %}
+{% endblock %}
+{% block main %}
+ <!-- WRAPPER -->
+<div class="main">
+	<div class="main-content">
+        <div class="container-fluid">
+						<div class="panel" style="width:80%;">
+							<div class="panel-heading"><h2>TUTORIALS</h2></div>
+                        <div class="panel-heading"><h3>1. Getting Acquainted with the Modeling Tool</h3></div>
+							<div  class="panel-body">In this video tutorial we get acquainted with the modeling tool, looking at the example model, the control buttons, and the different menus.
+								</div>
+							<video width="70%" height="10%" style="margin-left:10%" controls>
+                                  <source src="movie.mp4" type="video/mp4">
+
+                        </video>
+
+							 <div class="panel-heading"><h3>2. Building Your first Model</h3></div>
+							<div  class="panel-body">In this tutorial we build a small model of Northwind containing  anchors with attributes and ties connecting the anchors. In business terminology, we need to analyse sales of tha company Northwind.
+								</div>
+							<video width="70%" height="10%" style="margin-left:10%" controls>
+                                  <source src="movie.mp4" type="video/mp4">
+
+                        </video>
+                         <div class="panel-heading"><h3>3. Creating a Data warehouse Implementation</h3></div>
+							<div  class="panel-body">In this tutorial we create a data warehouse implementation of the conceptual model from the previous tutorials. Thanks to the 1-1 mapping onto tables and automated rules for index, view, and function creation this can all be done in seconds.
+								</div>
+							<video width="70%" height="10%" style="margin-left:10%" controls>
+                                  <source src="movie.mp4" type="video/mp4">
+
+                        </video>
+
+							 <div class="panel-heading"><h3>4. Evolving the Model</h3></div>
+							<div  class="panel-body">In this tutorial we evolve an already existing model that has been in use for some time.
+								</div>
+							<video width="70%" height="10%" style="margin-left:10%" controls>
+                                  <source src="movie.mp4" type="video/mp4">
+
+                        </video>
+
+						</div>
+
+					</div>
+
+
+	    </div>
+
+</div>
+{% endblock %}
+  	{% block footer %}
+{% endblock %}
